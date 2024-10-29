@@ -1,5 +1,5 @@
 ---
-title: "writing_functions"
+title: "Writing Functions"
 author: "Soomin You"
 date: "2024-10-24"
 output: github_document
