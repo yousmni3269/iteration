@@ -171,6 +171,10 @@ ADD A LIST COLUMN!!
 
 ```{r}
 listcol_df |>
+  mutate(output = map_dfr(samp, mean_and_sd),
+         iqr = map_dbl(samp, IQR))
+
+listcol_df |>
   mutate(output = map(samp, mean_and_sd),
          iqr = map_dbl(samp, IQR)) |>
   select(-samp) |>
@@ -181,7 +185,7 @@ listcol_df |>
 
 ## NSDUH
 
-This is a versio of our function last time. 
+This is a version of our function last time. 
 
 ```{r}
 nsduh_table_format = function(html, table_num){
@@ -194,7 +198,6 @@ nsduh_table_format = function(html, table_num){
     select(-contains("P Value"))
   
   return(out_table)
-  
 }
 ```
 
@@ -210,6 +213,13 @@ nsduh_html = read_html(nsduh_url)
 
 
 ```{r}
+nsduh_html |>
+  html_table() |>
+  nth(1)
+```
+
+
+```{r}
 nsduh_table_format(nsduh_html, table_num = 1)
 nsduh_table_format(nsduh_html, table_num = 4)
 nsduh_table_format(nsduh_html, table_num = 5)
@@ -217,7 +227,7 @@ nsduh_table_format(nsduh_html, table_num = 5)
 nsduh_df = 
   tibble(
     drug = c("marj", "cocaine", "heroin"), 
-    table_n = c(1,4,5), 
+    table_n = c(1, 4, 5)
   ) |>
   mutate(table = map(table_n, nsduh_table_format, html = nsduh_html)) |>
   unnest(table)
@@ -272,13 +282,14 @@ weather_nest =
 weather_nest[["data"]][[1]]
 ```
 
-Let's try regressing tmax and tmin. 
+Let's try regressing tmax on tmin. 
 
 ```{r}
 lm(tmax ~ tmin, data = weather_nest[["data"]][[1]])
 lm(tmax ~ tmin, data = weather_nest[["data"]][[2]])
 lm(tmax ~ tmin, data = weather_nest[["data"]][[3]])
 ```
+
 
 ```{r}
 weather_nest |>
